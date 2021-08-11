@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>edit ページ</title>
+</head>
+<body>
+    edit ページ
+<form action="/edit/<%= item.id %>" method="POST">
+
+    <li>
+        <%= item.id %> : 
+        <input type="text" name="itemName" value="<%= item.name %>">
+        <input type="submit" value="更新">
+    </li>
+
+</form>
+</body>
+
+</html>
