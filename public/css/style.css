@@ -1,0 +1,33 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 100%;
+    font-family: 'Hiragino Sans', sans-serif;
+    line-height: 1.7;
+    letter-spacing: 1px;
+}
+
+body {
+    margin: 0;
+    background-color: #f6faff;
+    color: #6c7686;
+}
+
+ul, li {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+a {
+    display: block;
+    text-decoration: none;
+    color: #2d3133;
+    font-size: 14px;
+}
+
+h1 {
+    color: red;
+}
