@@ -124,31 +124,54 @@ app.get('/signup', (req, res) => {
     res.render('signup.ejs', {errors: []});
 })
 
-app.post('/signup', (req, res) => {
-    const username = req.body.username;
-    const email = req.body.email;
-    const password = req.body.password;
-    const errors = [];
-    client.query('SELECT * FROM users WHERE email = ($1)',
-    [email],
-    (error, results) => {
-        if(results.rows.length > 0) {
-            errors.push('すでにユーザー情報があります')
-            res.render('signup.ejs', {errors: errors})
-        } else {
-        bcrypt.hash(password, 10, (error, hash) => {
-            client.query('INSERT into users (name, email, password) VALUES ($1, $2, $3) RETURNING id', //RETURNINGを使うことでINSERTしたレコードの情報を返してくれる 
-            [username, email, hash],
-                (error, results) => {
-                    // console.log(results.rows[0].id)
-                    req.session.username = username;
-                    req.session.user_id = results.rows[0].id
-                    res.redirect('/')
-                })
-        })
- 
+app.post('/signup', 
+    (req, res, next) => {
+        const username = req.body.username;
+        const email = req.body.email;
+        const password = req.body.password;
+        const errors = [];
+        //バリデーションチェック
+        if(username === '') {
+            errors.push('ユーザー名を入力してください');
         }
-    })
+        if(email === '') {
+            errors.push('メールアドレスを入力してください');
+        }
+        if(password === '') {
+            errors.push('パスワードを入力してください')
+        }
+        if(errors.length > 0) {
+        res.render('signup.ejs', {errors: errors});
+        } else {
+            next();
+        }
+    },
 
-})
+    (req, res) => {
+        const username = req.body.username;
+        const email = req.body.email;
+        const password = req.body.password;
+        const errors = [];
+        client.query('SELECT * FROM users WHERE email = ($1)',
+        [email],
+            (error, results) => {
+                if(results.rows.length > 0) {
+                    errors.push('すでにユーザー情報があります')
+                    res.render('signup.ejs', {errors: errors})
+                } else {
+                bcrypt.hash(password, 10, (error, hash) => {
+                    client.query('INSERT into users (name, email, password) VALUES ($1, $2, $3) RETURNING id', //RETURNINGを使うことでINSERTしたレコードの情報を返してくれる 
+                    [username, email, hash],
+                        (error, results) => {
+                            // console.log(results.rows[0].id)
+                            req.session.username = username;
+                            req.session.user_id = results.rows[0].id
+                            res.redirect('/')
+                        })
+                })}
+
+            }
+        )
+    }
+)
 app.listen(3000);
